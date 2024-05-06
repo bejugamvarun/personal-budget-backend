@@ -1,27 +1,35 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const authFunctions = require('./authFunctions');
-const budgetFunctions = require('./budget');
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const authFunctions = require("./authFunctions");
+const budgetFunctions = require("./budget");
 const app = express();
 const port = process.env.port || 3000;
+const pool = require("./dbConfig");
 
 app.use(express.json());
 app.use(cors());
 
-app.post('/signup', async (req, res) => {
+app.post("/signup", async (req, res) => {
   const { firstName, lastName, email, username, password } = req.body;
 
-  authFunctions.signup(firstName, lastName, email, username, password, (result) => {
-    if (result.success) {
-      res.json({ success: true });
-    } else {
-      res.status(400).json({ success: false, message: result.message });
+  authFunctions.signup(
+    firstName,
+    lastName,
+    email,
+    username,
+    password,
+    (result) => {
+      if (result.success) {
+        res.json({ success: true });
+      } else {
+        res.status(400).json({ success: false, message: result.message });
+      }
     }
-  });
+  );
 });
 
-app.post('/login', async (req, res) => {
+app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   authFunctions.login(username, password, (result) => {
@@ -33,7 +41,7 @@ app.post('/login', async (req, res) => {
   });
 });
 
-app.post('/refresh-token', (req, res) => {
+app.post("/refresh-token", (req, res) => {
   const token = req.body.token;
 
   authFunctions.refreshToken(token, (result) => {
@@ -45,7 +53,7 @@ app.post('/refresh-token', (req, res) => {
   });
 });
 
-app.post('/forgot-password', async (req, res) => {
+app.post("/forgot-password", async (req, res) => {
   const { username } = req.body;
 
   authFunctions.forgotPassword(username, (result) => {
@@ -57,29 +65,35 @@ app.post('/forgot-password', async (req, res) => {
   });
 });
 
-app.post('/addBudget', (req, res) => {
+app.post("/addBudget", (req, res) => {
   const token = req.headers.authorization;
   const { selectedMonths, budgetCriteria, amount } = req.body;
 
   if (!token) {
-    return res.status(401).send('Unauthorized');
+    return res.status(401).send("Unauthorized");
   }
 
-  budgetFunctions.addBudget(token, selectedMonths, budgetCriteria, amount, (result) => {
-    if (result.success) {
-      res.status(200).json({ message: result.message });
-    } else {
-      res.status(400).json({ message: result.message });
+  budgetFunctions.addBudget(
+    token,
+    selectedMonths,
+    budgetCriteria,
+    amount,
+    (result) => {
+      if (result.success) {
+        res.status(200).json({ message: result.message });
+      } else {
+        res.status(400).json({ message: result.message });
+      }
     }
-  });
+  );
 });
 
-app.get('/getBudget/:month', (req, res) => {
+app.get("/getBudget/:month", (req, res) => {
   const token = req.headers.authorization;
   const monthName = req.params.month;
 
   if (!token) {
-    return res.status(401).send('Unauthorized');
+    return res.status(401).send("Unauthorized");
   }
 
   budgetFunctions.getBudgetByMonth(token, monthName, (result) => {
@@ -91,29 +105,35 @@ app.get('/getBudget/:month', (req, res) => {
   });
 });
 
-app.post('/addExpense', (req, res) => {
+app.post("/addExpense", (req, res) => {
   const token = req.headers.authorization;
   const { selectedBudget, expense, selectedMonth } = req.body;
 
   if (!token) {
-    return res.status(401).send('Unauthorized');
+    return res.status(401).send("Unauthorized");
   }
 
-  budgetFunctions.addExpense(token, selectedMonth, selectedBudget, expense, (result) => {
-    if (result.success) {
-      res.status(200).json({ message: result.message });
-    } else {
-      res.status(400).json({ message: result.message });
+  budgetFunctions.addExpense(
+    token,
+    selectedMonth,
+    selectedBudget,
+    expense,
+    (result) => {
+      if (result.success) {
+        res.status(200).json({ message: result.message });
+      } else {
+        res.status(400).json({ message: result.message });
+      }
     }
-  });
+  );
 });
 
-app.get('/getExpense/:month', (req, res) => {
+app.get("/getExpense/:month", (req, res) => {
   const token = req.headers.authorization;
   const monthName = req.params.month;
 
   if (!token) {
-    return res.status(401).send('Unauthorized');
+    return res.status(401).send("Unauthorized");
   }
 
   budgetFunctions.getExpenseByMonth(token, monthName, (result) => {
@@ -125,7 +145,14 @@ app.get('/getExpense/:month', (req, res) => {
   });
 });
 
-
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error connecting to database");
+    } else {
+      console.log("Connected to database");
+      connection.release();
+    }
+  });
 });

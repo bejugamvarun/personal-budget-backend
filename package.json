@@ -9,7 +9,7 @@
     "dev": "nodemon app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Varun Kumar Bejugam",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
