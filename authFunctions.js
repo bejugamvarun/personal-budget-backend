@@ -29,8 +29,8 @@ function sendPasswordResetEmail(username, temporaryPassword) {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "letsplannn@gmail.com",
-      pass: "Letsplannn@1",
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 
@@ -48,7 +48,7 @@ function sendPasswordResetEmail(username, temporaryPassword) {
 
       const userMail = results[0].email;
 
-      const resetLink = `http://localhost:4200/reset-password?token=${temporaryPassword}`;
+      const resetLink = `${process.env.BASE_URL}/reset-password?token=${temporaryPassword}`;
       let mailOptions = {
         from: "letsplannn@gmail.com",
         to: userMail,

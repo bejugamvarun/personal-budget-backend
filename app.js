@@ -149,7 +149,7 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   pool.getConnection((err, connection) => {
     if (err) {
-      console.error("Error connecting to database");
+      console.error(`Error connecting to database ${err}`);
     } else {
       console.log("Connected to database");
       connection.release();
