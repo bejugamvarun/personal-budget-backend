@@ -85,8 +85,9 @@ function signup(firstName, lastName, email, username, password, callback) {
       [username],
       (error, results, fields) => {
         if (error) {
+          console.log(error);
           connection.release();
-          return callback({ success: false, message: "Error executing query" });
+          return callback({ success: false, message: "Error executing query", error: error });
         }
 
         if (results.length > 0) {

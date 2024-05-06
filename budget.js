@@ -13,6 +13,7 @@ function addBudget(token, months, budgetCriteria, amount, callback) {
 
     pool.getConnection((err, connection) => {
       if (err) {
+        console.log(err);
         return callback({
           success: false,
           message: "Error connecting to the database",
@@ -22,6 +23,7 @@ function addBudget(token, months, budgetCriteria, amount, callback) {
       const getMonthIdsSql = "SELECT month_id FROM Month WHERE month IN (?)";
       connection.query(getMonthIdsSql, [months], (err, monthRows) => {
         if (err) {
+          console.log(err);
           connection.release();
           return callback({
             success: false,
@@ -125,6 +127,7 @@ function getBudgetByMonth(token, monthName, callback) {
       connection.query(sql, [monthName, user_id], (error, results) => {
         connection.release();
         if (error) {
+          log.error(error);
           return callback({
             success: false,
             message: "Error fetching budgets",

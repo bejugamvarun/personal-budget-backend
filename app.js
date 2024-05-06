@@ -1,11 +1,13 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const authFunctions = require("./authFunctions");
 const budgetFunctions = require("./budget");
 const app = express();
 const port = process.env.port || 3000;
 const pool = require("./dbConfig");
+const logger = require("morgan");
+
+app.use(logger("dev"));
 
 app.use(express.json());
 app.use(cors());
