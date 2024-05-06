@@ -2,10 +2,10 @@ const mysql = require('mysql');
 
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: 'sql5.freemysqlhosting.net',
-    user: 'sql5667871',
-    password: 'glRfrxIQEF',
-    database: 'sql5667871'
+    host: 'localhost:3306',
+    user: 'root',
+    password: 'root',
+    database: 'personal-budget-db'
   });
 
 module.exports = pool;
